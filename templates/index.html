@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fake News Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        .form-container textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+            box-sizing: border-box;
+        }
+        .form-container .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .form-container input[type="submit"],
+        .form-container button[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 48%;
+            font-size: 16px;
+        }
+        .form-container button[type="button"] {
+            background-color: #f44336; /* Red color for Clear button */
+        }
+        .form-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .form-container button[type="button"]:hover {
+            background-color: #e53935;
+        }
+        .result {
+            font-size: 1.5em;
+            color: #333;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+
+    <script>
+        function clearTextarea() {
+            document.querySelector('textarea[name="news"]').value = "";
+        }
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Fake News Detection</h2>
+        <form action="/predict" method="post">
+            <label for="news">Enter News Paragraph:</label>
+            <textarea name="news" required placeholder="Paste or type news paragraph here..."></textarea>
+            
+            <div class="button-group">
+                <input type="submit" value="Detect">
+                <button type="button" onclick="clearTextarea()">Clear</button>
+            </div>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result">{{ prediction_text }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
