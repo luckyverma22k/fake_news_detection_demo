@@ -15,22 +15,28 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Here, get news paragraph from form
-    paragraph = list(request.form.values())[0]   # Assuming only 1 input
-    # Now you must tokenize, pad it exactly like training time
-    # I will show you this part separately if you want
+    # Get the input paragraph
+    news_text = request.form['news']  # This gets the 'news' input from HTML form
 
-    # Example (pseudo): processed_input = preprocess(paragraph)
+    # Tokenize and pad the text
+    sequence = tokenizer.texts_to_sequences([news_text])
+    padded = pad_sequences(sequence, maxlen=MAX_LEN, padding='post')
 
-    # For now dummy input
-    processed_input = torch.randint(0, 5000, (1, 50))  # Shape (batch_size=1, seq_len=50)
+    # Convert to tensor
+    input_tensor = torch.tensor(padded, dtype=torch.long).to(device)
 
+    # Predict
+    model.eval()
     with torch.no_grad():
-        output = model(processed_input)
-    
-    prediction = 'Fake News' if output.item() > 0.5 else 'Real News'
+        output = model(input_tensor)
 
-    return render_template('index.html', prediction_text=f'Prediction: {prediction}')
+    # Convert output to label
+    prediction = (output > 0.5).float().item()  # threshold at 0.5
+    label = 'Fake News' if prediction < 0.5 else 'Real News'
+
+    # Return prediction
+    return render_template('index.html', prediction_text=f'Prediction: {label}')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
